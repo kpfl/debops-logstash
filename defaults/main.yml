@@ -1,2 +1,156 @@
 ---
-# defaults file for debops-logstash
+# .. vim: foldmarker=[[[,]]]:foldmethod=marker
+
+# debops.logstash default variables [[[
+# ==========================================
+
+# .. contents:: Sections
+#    :local:
+#
+# .. include:: includes/all.rst
+
+
+# APT packages, version [[[
+# -------------------------
+
+# The ``debops.logstash`` role uses the ``debops.elatic_co`` Ansible role to
+# configure the Elastic APT repositories and install the packages. The role
+# also installs the Ansible facts that provide the :command:`logstash` version.
+
+# .. envvar:: logstash__base_packages [[[
+#
+# List of base APT packages to install.
+logstash__base_packages: [ 'logstash' ]
+
+                                                                   # ]]]
+# .. envvar:: logstash__packages [[[
+#
+# List of additional APT packages to install with Logstash.
+logstash__packages: []
+
+                                                                   # ]]]
+# .. envvar:: logstash__version [[[
+#
+# Store the detected Logstash version in a convenient variable for conditional
+# configuration.
+logstash__version: '{{ ansible_local.elastic_co.packages.logstash
+                     if (ansible_local|d() and ansible_local.elastic_co|d() and
+                         ansible_local.elastic_co.packages|d() and
+                         ansible_local.elastic_co.packages.logstash|d())
+                     else "0.0.0" }}'
+
+                                                                   # ]]]
+                                                                   # ]]]
+# UNIX user and group [[[
+# -----------------------
+
+# .. envvar:: logstash__user [[[
+#
+# Name of the UNIX user account used by Logstash.
+logstash__user: 'logstash'
+
+                                                                   # ]]]
+# .. envvar:: logstash__group [[[
+#
+# Name of the UNIX primary group used by Logstash.
+logstash__group: 'logstash'
+
+                                                                   # ]]]
+                                                                   # ]]]
+
+# Logstash server options [[[
+# -------------------------
+
+                                                                   # ]]]
+# .. envvar:: logstash__listen_beats_port [[[
+#
+# Specify the TCP port on which Logstash server will listen for connections
+# from beats.
+logstash__listen_beats_port: '5044'
+
+# .. envvar:: logstash__ferm_beats_sources [[[
+#
+# Specify the hosts from which connections on logstash__listen_beats_port
+# are allowed (ferm).
+logstash__ferm_beats_sources:
+  - 192.168.110.100
+                                                                   # ]]]
+
+# .. envvar:: logstash__elasticsearch_urls [[[
+#
+# The URLs of the Elasticsearch cluster the Logstash client should connect
+# to. By default Kibana is configured to connect to a load-balancer
+# Elasticsearch instance on the same host.
+logstash__elasticsearch_urls: ['http://localhost:9200']
+
+                                                                   # ]]]
+                                                                   # ]]]
+
+
+logstash__ssl_certificate_file: ""
+logstash__ssl_key_file: ""
+
+# Plugin configuration [[[
+# ------------------------
+
+# These variables define lists of Logstash plugins to install/remove, as
+# well as additional configuration options for them.
+# See :ref:`logstash__ref_plugins` for more details.
+
+# .. envvar:: logstash__plugins [[[
+#
+# List of Logstash plugins to manage on all hosts in the Ansible inventory.
+logstash__plugins:
+  - name: logstash-input-beats
+    state: present
+
+  - name: logstash-filter-multiline
+    state: present
+
+                                                                   # ]]]
+# .. envvar:: logstash__group_plugins [[[
+#
+# List of Logstash plugins to manage on hosts in specific Ansible inventory
+# group.
+logstash__group_plugins: []
+
+                                                                   # ]]]
+# .. envvar:: logstash__host_plugins [[[
+#
+# List of Logstash plugins to manage on specific hosts in the Ansible inventory.
+logstash__host_plugins: []
+
+                                                                   # ]]]
+# .. envvar:: logstash__combined_plugins [[[
+#
+# Actual list of Logstash plugins that combines other plugin variables and is
+# used in the Ansible tasks and the configuration template.
+logstash__combined_plugins: '{{ lookup("flattened", (logstash__plugins
+                              + logstash__group_plugins
+                              + logstash__host_plugins)) }}'
+                                                                   # ]]]
+                                                                   # ]]]
+
+# Configuration for other Ansible roles [[[
+# -----------------------------------------
+
+# .. envvar:: logstash__elastic_co__dependent_packages [[[
+#
+# Configuration for the ``debops.elastic_co`` Ansible role.
+logstash__elastic_co__dependent_packages:
+  - '{{ logstash__base_packages }}'
+  - '{{ logstash__packages }}'
+                                                                   # ]]]
+
+# .. envvar:: logstash__ferm__dependent_rules [[[
+#
+# Configuration for the ``debops.ferm`` Ansible role.
+logstash__ferm__dependent_rules:
+  - name: 'logstash-beats'
+    type: 'accept'
+    dport: ['{{ logstash__listen_beats_port }}']
+    saddr: '{{ logstash__ferm_beats_sources }}'
+    accept_any: False
+
+                                                                       # ]]]
+                                                                       # ]]]

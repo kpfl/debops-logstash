@@ -1,0 +1,10 @@
+#
+# {{ ansible_managed }}
+#
+output {
+  elasticsearch {
+    hosts => {{ logstash__elasticsearch_urls | to_json }}
+    index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+    document_type => "%{[@metadata][type]}"
+  }
+}

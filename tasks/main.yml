@@ -1,2 +1,52 @@
 ---
-# tasks file for debops-logstash
+
+- name: Check state of installed Logstash plugins
+  tags: [ "role::logstash:plugins" ]
+  shell: bin/logstash-plugin list
+  args:
+    chdir: '/usr/share/logstash'
+  register: logstash__register_plugins
+  changed_when: False
+  check_mode: False
+
+- name: Install Logstash plugins
+  tags: [ "role::logstash:plugins" ]
+  shell: bin/logstash-plugin install {{ item.path | d(item.name) }}
+  args:
+    chdir: '/usr/share/logstash'
+  notify: [ 'Restart logstash' ]
+  with_flattened:
+    - '{{ logstash__combined_plugins }}'
+  when: (item.name|d() and item.state|d('present') != 'absent' and
+         item.name not in logstash__register_plugins.stdout_lines)
+
+- name: Remove Logstash plugins
+  tags: [ "role::logstash:plugins" ]
+  shell: bin/logstash-plugin remove {{ item.name }}
+  args:
+    chdir: '/usr/share/logstash'
+  notify: [ 'Restart logstash' ]
+  with_flattened:
+    - '{{ logstash__combined_plugins }}'
+  when: (item.name|d() and item.state|d('present') == 'absent' and
+         item.name in logstash__register_plugins.stdout_lines)
+
+
+- name: Create Logstash configuration files and filters.
+  tags: [ "role::logstash:config" ]
+  template:
+    src: "etc/logstash/conf.d/{{ item }}.j2"
+    dest: "/etc/logstash/conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 01-beats-input.conf
+    - 10-syslog-filter.conf
+    - 11-nginx-filter.conf
+    - 12-apache-filter.conf
+    - 14-solr-filter.conf
+    - 15-drupal-filter.conf
+    - 30-elasticsearch-output.conf
+  notify: Restart Logstash
+

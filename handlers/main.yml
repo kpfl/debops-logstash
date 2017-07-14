@@ -1,2 +1,13 @@
 ---
-# handlers file for debops-logstash
+
+- name: Start logstash
+  service:
+    name: 'logstash'
+    state: 'started'
+    enabled: True
+
+- name: Restart logstash
+  service:
+    name: 'logstash'
+    state: 'restarted'
+

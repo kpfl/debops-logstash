@@ -1,0 +1,10 @@
+#
+# {{ ansible_managed }}
+#
+filter {
+  if [type] == "nginx" {
+    grok {
+      match => { "message" => "%{COMBINEDAPACHELOG}" }
+    }
+  }
+}
