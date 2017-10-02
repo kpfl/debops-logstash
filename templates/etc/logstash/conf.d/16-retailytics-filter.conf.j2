@@ -1,0 +1,13 @@
+
+#
+# {{ ansible_managed }}
+#
+filter {
+  if [type] == "retailytics_log" {
+    grok {
+      match => { "message" => ["%{COMBINEDAPACHELOG} UID:%{USER:user_id}", "%{COMBINEDAPACHELOG}"] }
+
+	  remove_field => ["message"]
+    }
+  }
+}

@@ -47,6 +47,14 @@
     - 12-apache-filter.conf
     - 14-solr-filter.conf
     - 15-drupal-filter.conf
+    - 16-retailytics-filter.conf
     - 30-elasticsearch-output.conf
   notify: Restart Logstash
+
+
+- name: Ensure Logstash is running
+  tags: [ "dfv::logstash", "role::logstash:config" ]
+  service:
+    name: logstash
+    state: started
 

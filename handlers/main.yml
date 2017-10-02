@@ -1,12 +1,12 @@
 ---
 
-- name: Start logstash
+- name: Start Logstash
   service:
     name: 'logstash'
     state: 'started'
     enabled: True
 
-- name: Restart logstash
+- name: Restart Logstash
   service:
     name: 'logstash'
     state: 'restarted'
