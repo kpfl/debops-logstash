@@ -1,7 +1,4 @@
-#
-# {{ ansible_managed }}
-#
-input {
+
   beats {
     port => {{ logstash__listen_beats_port }}
 {% if logstash__ssl_certificate_file and logstash__ssl_key_file %}
@@ -11,4 +8,4 @@ input {
     ssl_verify_mode => "force_peer"
 {% endif %}
   }
-}
+

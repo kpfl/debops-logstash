@@ -1,7 +1,7 @@
 ---
 
 - name: Check state of installed Logstash plugins
-  tags: [ "role::logstash:plugins" ]
+  tags: [ "dfv::logstash:plugins" ]
   shell: bin/logstash-plugin list
   args:
     chdir: '/usr/share/logstash'
@@ -10,7 +10,7 @@
   check_mode: False
 
 - name: Install Logstash plugins
-  tags: [ "role::logstash:plugins" ]
+  tags: [ "dfv::logstash:plugins" ]
   shell: bin/logstash-plugin install {{ item.path | d(item.name) }}
   args:
     chdir: '/usr/share/logstash'
@@ -21,7 +21,7 @@
          item.name not in logstash__register_plugins.stdout_lines)
 
 - name: Remove Logstash plugins
-  tags: [ "role::logstash:plugins" ]
+  tags: [ "dfv::logstash:plugins" ]
   shell: bin/logstash-plugin remove {{ item.name }}
   args:
     chdir: '/usr/share/logstash'
@@ -33,7 +33,7 @@
 
 
 - name: Create Logstash configuration files and filters.
-  tags: [ "role::logstash:config" ]
+  tags: [ "dfv::logstash:config" ]
   template:
     src: "etc/logstash/conf.d/{{ item }}.j2"
     dest: "/etc/logstash/conf.d/{{ item }}"
@@ -41,19 +41,15 @@
     group: root
     mode: 0644
   with_items:
-    - 01-beats-input.conf
-    - 10-syslog-filter.conf
-    - 11-nginx-filter.conf
-    - 12-apache-filter.conf
-    - 14-solr-filter.conf
-    - 15-drupal-filter.conf
-    - 16-retailytics-filter.conf
-    - 30-elasticsearch-output.conf
+    - input.conf
+    - filter.conf
+    - output.conf
+
   notify: Restart Logstash
 
 
 - name: Ensure Logstash is running
-  tags: [ "dfv::logstash", "role::logstash:config" ]
+  tags: [ "dfv::logstash", "dfv::logstash:config" ]
   service:
     name: logstash
     state: started

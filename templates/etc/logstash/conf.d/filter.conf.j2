@@ -1,0 +1,16 @@
+#
+# {{ ansible_managed }}
+#
+filter {
+{% for item in dfv_logstash__filter_config %}
+  {% if item.template is defined %}
+    {% include item.template%}
+  {% endif %}
+
+  {% if item.config is defined %}
+    {{ item.config }}
+  {% endif %}
+
+{% endfor %}
+
+}

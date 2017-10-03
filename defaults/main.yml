@@ -131,6 +131,35 @@ logstash__combined_plugins: '{{ lookup("flattened", (logstash__plugins
                                                                    # ]]]
                                                                    # ]]]
 
+
+
+# .. envvar:: dfv_logstash__input_config [[[
+#
+# Configuration entries for the logstash input
+# A list of dictionaries, with template and/or config as key
+# 
+dfv_logstash__input_config:
+  - template: _beats.conf.j2
+                                                                       # ]]]
+
+# .. envvar:: dfv_logstash__filter_config [[[
+#
+# Configuration entries for the logstash filters
+# A list of dictionaries, with template and/or config as key
+# 
+dfv_logstash__filter_config:
+  - template: _retailytics.conf.j2
+                                                                       # ]]]
+
+# .. envvar:: dfv_logstash__filter_config [[[
+#
+# Configuration entries for the logstash filters
+# A list of dictionaries, with template and/or config as key
+# 
+dfv_logstash__output_config:
+  - template: _elasticsearch.conf.j2
+                                                                       # ]]]
+
 # Configuration for other Ansible roles [[[
 # -----------------------------------------
 
