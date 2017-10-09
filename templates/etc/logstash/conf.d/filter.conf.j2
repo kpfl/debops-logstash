@@ -7,9 +7,9 @@ filter {
     {% include item.template%}
   {% endif %}
 
-  {% if item.config is defined %}
+  {%- if item.config is defined -%}
     {{ item.config }}
-  {% endif %}
+  {%- endif -%}
 
 {% endfor %}
 
