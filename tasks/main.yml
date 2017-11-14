@@ -14,7 +14,7 @@
   shell: bin/logstash-plugin install {{ item.path | d(item.name) }}
   args:
     chdir: '/usr/share/logstash'
-  notify: [ 'Restart logstash' ]
+  notify: [ 'restart logstash' ]
   with_flattened:
     - '{{ logstash__combined_plugins }}'
   when: (item.name|d() and item.state|d('present') != 'absent' and
@@ -25,7 +25,7 @@
   shell: bin/logstash-plugin remove {{ item.name }}
   args:
     chdir: '/usr/share/logstash'
-  notify: [ 'Restart logstash' ]
+  notify: [ 'restart logstash' ]
   with_flattened:
     - '{{ logstash__combined_plugins }}'
   when: (item.name|d() and item.state|d('present') == 'absent' and
@@ -45,7 +45,7 @@
     - filter.conf
     - output.conf
 
-  notify: Restart Logstash
+  notify: restart logstash
 
 
 - name: Ensure Logstash is running

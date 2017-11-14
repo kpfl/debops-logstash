@@ -2,13 +2,13 @@
 # {{ ansible_managed }}
 #
 input {
-{% for item in dfv_logstash__input_config %}
-  {% if item.template is defined %}
-    {% include item.template%}
+{%- for item in dfv_logstash__input_config -%}
+  {%- if item.template is defined -%}
+    {%- include item.template %}
   {% endif %}
 
-  {% if item.config is defined %}
-    {{ item.config }}
+  {%- if item.config is defined -%}
+{{ item.config }}
   {% endif %}
 
 {% endfor %}
