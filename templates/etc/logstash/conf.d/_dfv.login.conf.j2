@@ -1,0 +1,11 @@
+
+  if [type] == "dfv_login_log" {
+    grok {
+      patterns_dir => ["/etc/logstash/patterns"]
+      match        => { "message" => ["%{DFV_LOGIN_EMAIL}", "%{DFV_RELOGIN}"]
+	  remove_field => ["message"]
+    }
+    date {
+      match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+    }
+  }

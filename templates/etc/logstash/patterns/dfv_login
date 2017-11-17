@@ -1,0 +1,6 @@
+
+
+DFV_LOGIN_EMAIL %{IP:client} - %{EMAILADDRESS:email} \[%{HTTPDATE:timestamp}\] \"(?:%{WORD} %{RTL_USER_URL:request}(?: HTTP/%{NUMBER}))\" %{NUMBER:resp_code} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:ua}
+
+DFV_RELOGIN %{IP:client} - %{RTL_PROD_USER} \[%{HTTPDATE:timestamp}\] \"(?:%{WORD} %{RTL_USER_URL:request}%{INT:userid}:%{RTL_USER_HASH} (?:HTTP/%{NUMBER}))\" %{NUMBER:resp_code} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:ua}
+
